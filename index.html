@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Apps Script 練習</title>
+</head>
+<body>
+    <form action="" method="get">
+        <p>検索したいメールアドレスを入力してください。</p>
+        <input type="search" name="key" placeholder="キーワードを入力">
+        <input type="submit" value="検索">
+    </form>
+    <script>
+        if(document.URL.match(/\?/)) {
+            // URLを取得し、「?」で分割
+            const url = location.href;
+            const urlArray = url.split('?');
+            const paramArray = [];
+            const paramData = urlArray[1].split('=');
+            paramArray.push(paramData[0]);
+            paramArray[paramData[0]] = paramData[1];
+            // 検索した値を取得
+            const text = decodeURI(paramArray['key']);
+            if(text!='undefined') { 
+                // 検索した場合のみ処理
+                document.write(`検索ワード「${text}」`)
+                const request = new XMLHttpRequest();
+                request.open('GET', `https://script.google.com/macros/s/AKfycbxYJjq-okH8ztuh52CQ3VC8wl6jCwctgbNC5GcWaqx-NsGKaFNHyWGKtmncLGra1xmIgQ/exec?name=${text}`);
+                request.responseType = 'json';
+                request.onload = function () {
+                    let data = this.response;
+                    document.write(`秘密のメッセージ「${data['data']}」`)
+                };
+                request.send();
+            }
+        }
+    </script>
+</body>
+</html>
